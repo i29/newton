@@ -44,6 +44,11 @@
         text-align: center;
         display: block;
     }
+    .qrcode a{
+        font-size: 13px;
+        display: block;
+        line-height: 150%;
+    }
     
     </style>
     <!-- <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script> -->
@@ -54,6 +59,7 @@
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/barrageWall.js"></script>
     <script type="text/javascript" src="js/run.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
 </head>
 <body class="">
     
@@ -69,10 +75,27 @@
     
 
     <div class="qrcode">
-        <div>发送祝福：使用 NewPay 转账任意金额到 <a>NEW182R2GcTXEawJZzaMc5j3NoY527ovpZYXXN9</a> 地址，备注留下祝福语即可。</div>
+        <div>发送祝福：使用 NewPay 转账任意金额到 <a id="btn">NEW182R2GcTXEawJZzaMc5j3NoY527ovpZYXXN9</a>在备注中填写祝福语。</div>
     </div>
     
     <div class="container"></div>
 
+    <script type="text/javascript">
+        var btn = document.querySelector('#btn');
+        btn.addEventListener('click',() => {
+            const input = document.createElement('input');
+            input.setAttribute('readonly', 'readonly');
+            input.setAttribute('value', 'NEW182R2GcTXEawJZzaMc5j3NoY527ovpZYXXN9');
+            document.body.appendChild(input);
+            input.setSelectionRange(0, 9999);
+            if (document.execCommand('copy')) {
+                document.execCommand('copy');
+                console.log('复制成功');
+                layer.msg('复制成功');
+            }
+            document.body.removeChild(input);
+        })
+
+    </script>
 </body>
 </html>
