@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset=utf-8>
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/4.2.1/css/bootstrap.min.css">
+    <title>牛顿祝福 Happy New Year </title>
+    <style media="screen">
+    body{
+
+        /*background:url(https://www.newtonproject.org/static/src/img-webpack/1403882c.bg_map.svg) no-repeat #F00001;*/
+        /*background-size: 100% auto;*/
+        background: #F00001;
+    }    
+    .header{
+        text-align:center;
+        padding:0 30px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .header img{
+        width: 100%;
+    }
+    .body{text-align: center;color: #FFE50C;margin-top: 50px;}
+    .body h1{font-size: 22px;line-height: 300%;}
+    .body h2{font-size: 18px;line-height: 300%;}
+
+    .screen_container{
+        /*background: url(/images/001.gif) no-repeat 0 0 ;*/
+        /*background-size: 90% 90%; */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+        /*background: #000;*/
+        overflow: hidden;
+    }
+    .bullet{
+        position: absolute;
+        /*box-shadow:0px 0px 5px 0px rgba(200,200,200,0.8);*/
+        text-shadow: 0px 0px white, 1px 1px rgba(255,255,255,0.5);
+        background: rgba(255,200,200,0.5);
+        padding:1px 10px;
+        border-radius: 10px;
+        display: block;
+        white-space:nowrap;
+    }
+    </style>
+    <!-- <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script> -->
+    <link rel="stylesheet" href="css/wall.css"/>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/barrageWall.js"></script>
+</head>
+<body class="">
+    
+    <div class="wrap">
+        <div class="header"><img src="images/001.gif" /></div>
+        <div class="body">
+            
+            <h1>每一个人都应该从经济增长中受益</h1>
+            <h2>牛顿：社群经济基础设施</h2>
+
+        </div>
+    </div>
+    <div class="screen_container container"></div>
+
+    
+<script type="text/javascript">
+
+
+// 弹幕定时器
+var url = 'https://explorer.newtonproject.org/api/v1/txs?address=NEW182E1hkVGzxrZAq6xaJDeg2e9HP9hc1R9qAv',
+    page = 0,
+    dataIndex = 1,
+    data1 = [],
+    data2 = [],
+    tmpData = [],
+    showIndex = 0;
+
+function loadDataByPage(currentPage) {
+
+    $.get(url, {pageNum: currentPage}, function(res){
+
+        if (res) {
+
+            var txs = res.txs;
+
+            for (var i = 0; i < txs.length; i++) {
+
+                if (dataIndex == 1) {
+                    data2.push(txs[i]);
+                } else {
+                    data1.push(txs[i]);
+                }
+            
+            }
+
+            if (currentPage + 1 < res.pagesTotal) {
+
+                page ++;
+                loadDataByPage(currentPage + 1);
+
+            } else {
+
+                page = 0;
+                dataIndex = dataIndex == 1 ? 2 : 1;
+
+            }
+
+        }
+    });
+}
+
+function loadData() {
+
+    loadDataByPage(page);
+
+    setInterval(function(){
+        
+        loadDataByPage(page);
+
+    }, 1000 * 60);
+
+}
+
+function showData() {
+
+    setInterval(function(){
+
+        if (tmpData.length == 0) {
+            tmpData = dataIndex == 1 ? Array.from(data1) : Array.from(data2);
+        }
+
+        var bullet = tmpData.shift();
+        var text = '';
+        if (bullet) {
+            var data = bullet['data'];
+
+            if (data && data.length > 2) {
+                text = hex2str(data.substring(2));
+            } else {
+                text = bullet['value'] + 'NEW';
+            }
+            barrageWall.upWall("https://www.newtonproject.org/static/images/newton-logo.svg?v=385","",text);
+        } 
+
+    }, 200);
+
+}
+
+function hex2str(hexstr) {
+    if (hexstr) {
+        var newstr = '';
+        var charArr = hexstr.split("");
+        for (var i = 0; i < charArr.length; i++) {
+            if (i % 2 == 0) {
+                newstr += '%' + charArr[i];
+            } else {
+                newstr += charArr[i];
+            }
+        }
+        return decodeURIComponent(newstr);
+    }
+    return '';
+}
+
+
+$(function () {
+
+    var option={
+      container:".container",//弹幕墙的id
+      barrageLen:15//弹幕的行数
+    }
+    barrageWall.init(option);//初始化弹幕墙
+    
+
+    loadData();
+    showData();
+
+});
+
+
+</script>
+</body>
+</html>
