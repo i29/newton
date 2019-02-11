@@ -4,7 +4,8 @@ var url = 'https://explorer.newtonproject.org/api/v1/txs?address=' + address,
     data1 = [],
     data2 = [],
     tmpData = [],
-    showIndex = 0;
+    showIndex = 0
+    timer = 0;
 
 function loadDataByPage(currentPage) {
 
@@ -54,7 +55,7 @@ function loadData() {
 
 function showData() {
 
-    setInterval(function(){
+    timer = setInterval(function(){
 
         if (tmpData.length == 0) {
             tmpData = dataIndex == 1 ? Array.from(data1) : Array.from(data2);
@@ -73,7 +74,14 @@ function showData() {
             barrageWall.upWall("https://www.newtonproject.org/static/images/newton-logo.svg?v=385","",text);
         } 
 
-    }, 200);
+        if (tmpData.length == 0) {
+            clearInterval(timer);
+            setTimeout(function(){
+                showData();
+            }, 6000);
+        }
+
+    }, 500);
 
 }
 
